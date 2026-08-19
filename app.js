@@ -88,6 +88,50 @@ function shopLabel(value) {
   return value === "bar" ? "Bar" : "Merch";
 }
 
+const PRODUCT_GROUPS = Object.freeze({
+  bar: Object.freeze([
+    { key: "beer", title: "Beer" },
+    { key: "wine", title: "Wine" },
+    { key: "sparkling", title: "Sparkling" },
+    { key: "non-alcoholic", title: "Non-alcoholic" },
+    { key: "soft-drinks", title: "Soft drinks" },
+    { key: "water", title: "Water" },
+    { key: "other-bar", title: "Other drinks" }
+  ]),
+  merch: Object.freeze([
+    { key: "t-shirts", title: "T-shirts" },
+    { key: "caps-bags", title: "Caps & bags" },
+    { key: "small-goods", title: "Small goods" },
+    { key: "other-merch", title: "Other merchandise" }
+  ])
+});
+
+function servingLabel(product) {
+  const id = product.id.toLowerCase();
+  const glassSize = id.match(/-(125|175)$/);
+  if (glassSize) return glassSize[1] + "ml glass";
+  if (id.includes("-bottle")) return "Bottle";
+  if (product.shop === "merch" && product.detail && !/architects holiday/i.test(product.detail)) return product.detail;
+  return ({ can: "Can", bottle: "Bottle", glass: "Glass", serve: "Single serve" })[product.unit] ?? "";
+}
+
+function productPresentation(product) {
+  const id = product.id.toLowerCase();
+  const detailSupplier = product.detail.trim();
+  if (product.shop === "merch") {
+    const groupKey = /tshirt/.test(id) ? "t-shirts" : /merch-cap|merch-tote/.test(id) ? "caps-bags" : /merch-pencil|merch-badge/.test(id) ? "small-goods" : "other-merch";
+    return { groupKey, supplier: "Architects Holiday", name: product.name, serving: servingLabel(product) };
+  }
+  if (/sussex-lager|table-beer|stir-neipa|reforestation-pale|1066-pale/.test(id)) return { groupKey: "beer", supplier: detailSupplier || "Brewing Brothers", name: product.name, serving: servingLabel(product) };
+  if (/tilsmore/.test(id)) return { groupKey: "sparkling", supplier: "Tilsmore", name: product.name, serving: servingLabel(product) };
+  if (/endgrain|bar-rose|bar-r-nv/.test(id)) return { groupKey: "wine", supplier: "Tillingham", name: product.name, serving: servingLabel(product) };
+  if (/club-mera/.test(id)) return { groupKey: "non-alcoholic", supplier: "Club Mera", name: product.name, serving: servingLabel(product) };
+  if (/lucky-saint/.test(id)) return { groupKey: "non-alcoholic", supplier: "Lucky Saint", name: product.detail || product.name, serving: servingLabel(product) };
+  if (/dalston/.test(id)) return { groupKey: "soft-drinks", supplier: detailSupplier || "Dalston Press", name: product.name, serving: servingLabel(product) };
+  if (/marlish/.test(id)) return { groupKey: "water", supplier: detailSupplier || "Marlish", name: product.name, serving: servingLabel(product) };
+  return { groupKey: "other-bar", supplier: detailSupplier || "Open Day", name: product.name, serving: servingLabel(product) };
+}
+
 function currentProducts() {
   return state.catalog.filter((product) => product.shop === currentShop && product.active);
 }
@@ -112,33 +156,53 @@ function renderProducts() {
   elements.products.replaceChildren();
   const products = currentProducts();
   elements.emptyProducts.hidden = products.length !== 0;
-  for (const product of products) {
-    const available = availableForProduct(state, product);
-    const button = make("button", "product-button");
-    button.type = "button";
-    button.dataset.productId = product.id;
-    button.disabled = product.pricePence == null || available === 0;
-    if (available === 0) button.classList.add("sold-out");
+  const groupedProducts = new Map(PRODUCT_GROUPS[currentShop].map((group) => [group.key, []]));
+  for (const product of products) groupedProducts.get(productPresentation(product).groupKey).push(product);
 
-    const heading = make("div");
-    heading.append(make("strong", "", product.name), make("small", "", product.detail || product.unit));
+  for (const group of PRODUCT_GROUPS[currentShop]) {
+    const groupProducts = groupedProducts.get(group.key);
+    if (!groupProducts.length) continue;
+    const section = make("section", "product-group product-group-" + group.key);
+    section.setAttribute("aria-labelledby", "product-group-title-" + group.key);
+    const groupHeader = make("header", "product-group-header");
+    const groupTitle = make("h3", "", group.title);
+    groupTitle.id = "product-group-title-" + group.key;
+    groupHeader.append(groupTitle, make("span", "", groupProducts.length + (groupProducts.length === 1 ? " choice" : " choices")));
+    const grid = make("div", "product-grid");
 
-    const meta = make("div", "product-meta");
-    const price = make("span", "product-price", product.pricePence == null ? "Set price" : money.format(product.pricePence / 100));
-    const stockLabel = make("span", "stock-label" + (available <= product.lowStockAt ? " low" : ""), stockText(product, available));
-    meta.append(price, stockLabel);
-    button.append(heading, meta);
-    button.addEventListener("click", () => {
-      try {
-        rememberBasket();
-        state = changeBasketQuantity(state, currentShop, product.id, 1);
-        persist();
-        render();
-      } catch (error) {
-        showToast(error.message);
-      }
-    });
-    elements.products.append(button);
+    for (const product of groupProducts) {
+      const presentation = productPresentation(product);
+      const available = availableForProduct(state, product);
+      const button = make("button", "product-button");
+      button.type = "button";
+      button.dataset.productId = product.id;
+      button.disabled = product.pricePence == null || available === 0;
+      if (available === 0) button.classList.add("sold-out");
+
+      const heading = make("div", "product-copy");
+      heading.append(make("span", "product-supplier", presentation.supplier), make("strong", "product-name", presentation.name));
+      if (presentation.serving) heading.append(make("span", "product-serving", presentation.serving));
+
+      const meta = make("div", "product-meta");
+      const price = make("span", "product-price", product.pricePence == null ? "Set price" : money.format(product.pricePence / 100));
+      const stockLabel = make("span", "stock-label" + (available <= product.lowStockAt ? " low" : ""), stockText(product, available));
+      meta.append(price, stockLabel);
+      button.append(heading, meta);
+      button.setAttribute("aria-label", [presentation.supplier, presentation.name, presentation.serving, price.textContent].filter(Boolean).join(", "));
+      button.addEventListener("click", () => {
+        try {
+          rememberBasket();
+          state = changeBasketQuantity(state, currentShop, product.id, 1);
+          persist();
+          render();
+        } catch (error) {
+          showToast(error.message);
+        }
+      });
+      grid.append(button);
+    }
+    section.append(groupHeader, grid);
+    elements.products.append(section);
   }
 }
 

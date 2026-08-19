@@ -65,6 +65,19 @@ test("weekend catalogue includes priced bar, wine serving, and merchandise produ
   assert.match(catalog, /inventoryId: id\.replace/);
 });
 
+test("catalogue visually groups products and separates supplier from serving format", async () => {
+  const [html, app, css] = await Promise.all([load("index.html"), load("app.js"), load("styles.css")]);
+  assert.match(html, /class="product-groups" id="products"/);
+  for (const title of ["Beer", "Wine", "Sparkling", "Non-alcoholic", "Soft drinks", "Water", "T-shirts"]) assert.match(app, new RegExp('title: "' + title));
+  assert.match(app, /product-supplier/);
+  assert.match(app, /product-serving/);
+  assert.match(app, /125\|175/);
+  assert.match(css, /\.product-group-header h3/);
+  assert.match(css, /\.product-supplier/);
+  assert.match(css, /\.product-serving/);
+  assert.match(css, /--group-accent-rgb/);
+});
+
 test("offline assets and install manifest are present", async () => {
   const [manifest, worker] = await Promise.all([load("manifest.webmanifest"), load("sw.js")]);
   assert.equal(JSON.parse(manifest).display, "standalone");
