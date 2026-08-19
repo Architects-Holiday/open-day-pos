@@ -10,12 +10,12 @@ The interface follows the Lobby Host Calm UI system. The only Architects Holiday
 2. Check the physical opening counts. For wines, edit the bottle row; bottle, 125ml and 175ml buttons share that stock.
 3. Leave one iPad in Bar and the other in Merch. Each remembers its last mode.
 4. Use the labelled product groups to find the item, then tap its button to build the order. Supplier names are highlighted and serving formats such as Bottle, 125ml glass and 175ml glass use a separate badge. Use Undo for the last basket change or Clear to start again.
-5. Tap Take payment and enter the exact displayed total on the standalone S710.
+5. Tap Take payment and enter the exact displayed total on the Stripe Card Reader.
 6. Only after the reader says Approved, tap Payment approved · complete sale.
 7. Open Reports at any time to see that iPad's revenue, units, distinct products and completed transactions.
 8. Export the sales CSV and full JSON backup from each iPad at close.
 
-The supplied catalogue contains 24 Bar buttons and 12 Merch buttons. Bar products are grouped into Beer, Wine, Sparkling, Non-alcoholic, Soft drinks and Water; merchandise uses T-shirts, Caps & bags and Small goods. Products with no physical stock remain visible but disabled. A completed sale snapshots the name, SKU and price, appends stock movements, and clears that counter’s basket.
+The supplied catalogue contains 24 Bar buttons and 12 Merch buttons. Bar products are grouped into Beer, Wine, Sparkling, Non-alcoholic, Soft drinks and Water. Merchandise places Caps & bags and Small goods before T-shirts, with Tote Bag before Cap. Product grids use three columns above mobile width, and the sparkling rosé pair starts on its own row. Products with no physical stock remain visible but disabled. A completed sale snapshots the name, SKU and price, appends stock movements, and clears that counter’s basket.
 
 Reports is read-only. It shows event totals, Bar and Merch counter totals, Beer, Wine, Alcohol-free, Soft drinks & water, Apparel, Bags and Small goods categories, plus a ranked product table. Revenue uses the price saved with each completed sale, so later catalogue edits do not rewrite historic totals. Products means distinct sale buttons/SKUs; units means the quantity sold.
 

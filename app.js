@@ -28,9 +28,7 @@ const undoBaskets = { bar: null, merch: null };
 const elements = {
   stationTitle: byId("stationTitle"),
   workspaceSuffix: byId("workspaceSuffix"),
-  workspaceSub: byId("workspaceSub"),
   skipLink: byId("skipLink"),
-  localBoundaryCopy: byId("localBoundaryCopy"),
   posView: byId("posView"),
   reportsView: byId("reportsView"),
   openReports: byId("openReports"),
@@ -99,9 +97,9 @@ const PRODUCT_GROUPS = Object.freeze({
     { key: "other-bar", title: "Other drinks" }
   ]),
   merch: Object.freeze([
-    { key: "t-shirts", title: "T-shirts" },
     { key: "caps-bags", title: "Caps & bags" },
     { key: "small-goods", title: "Small goods" },
+    { key: "t-shirts", title: "T-shirts" },
     { key: "other-merch", title: "Other merchandise" }
   ])
 });
@@ -136,6 +134,10 @@ function currentProducts() {
   return state.catalog.filter((product) => product.shop === currentShop && product.active);
 }
 
+function productSortRank(product) {
+  return ({ "merch-tote": 0, "merch-cap": 1, "merch-pencil": 2, "merch-badge": 3 })[product.id] ?? 100;
+}
+
 function plural(value, unit) {
   if (value === 1) return unit;
   if (unit === "glass") return "glasses";
@@ -158,6 +160,7 @@ function renderProducts() {
   elements.emptyProducts.hidden = products.length !== 0;
   const groupedProducts = new Map(PRODUCT_GROUPS[currentShop].map((group) => [group.key, []]));
   for (const product of products) groupedProducts.get(productPresentation(product).groupKey).push(product);
+  for (const groupProducts of groupedProducts.values()) groupProducts.sort((left, right) => productSortRank(left) - productSortRank(right));
 
   for (const group of PRODUCT_GROUPS[currentShop]) {
     const groupProducts = groupedProducts.get(group.key);
@@ -178,6 +181,7 @@ function renderProducts() {
       button.dataset.productId = product.id;
       button.disabled = product.pricePence == null || available === 0;
       if (available === 0) button.classList.add("sold-out");
+      if (product.id === "bar-tilsmore-rose-bottle") button.classList.add("product-row-break");
 
       const heading = make("div", "product-copy");
       heading.append(make("span", "product-supplier", presentation.supplier), make("strong", "product-name", presentation.name));
@@ -340,12 +344,10 @@ function renderHeader() {
   if (currentView === "reports") {
     elements.stationTitle.textContent = "Event";
     elements.workspaceSuffix.textContent = "summary";
-    elements.workspaceSub.textContent = "Review completed sales, revenue and product performance recorded on this iPad.";
     elements.posView.hidden = true;
     elements.reportsView.hidden = false;
     elements.skipLink.href = "#reportTitle";
     elements.skipLink.textContent = "Skip to report";
-    elements.localBoundaryCopy.textContent = "Completed sales shown from this iPad only";
     for (const button of document.querySelectorAll("[data-shop]")) button.setAttribute("aria-pressed", "false");
     elements.openReports.setAttribute("aria-pressed", "true");
     return;
@@ -354,12 +356,10 @@ function renderHeader() {
   const label = shopLabel(currentShop);
   elements.stationTitle.textContent = label;
   elements.workspaceSuffix.textContent = "counter";
-  elements.workspaceSub.textContent = "Tap products to build the order, then enter the exact total on the standalone Stripe reader.";
   elements.posView.hidden = false;
   elements.reportsView.hidden = true;
   elements.skipLink.href = "#products";
   elements.skipLink.textContent = "Skip to products";
-  elements.localBoundaryCopy.textContent = "Stock and sales are stored on this iPad only";
   elements.catalogueEyebrow.textContent = label + " selection";
   elements.openReports.setAttribute("aria-pressed", "false");
   for (const button of document.querySelectorAll("[data-shop]")) button.setAttribute("aria-pressed", String(button.dataset.shop === currentShop));

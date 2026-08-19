@@ -22,10 +22,6 @@
         <span>Operations</span>
       </button>
       <div class="topbar-end">
-        <div class="device-status" role="status">
-          <span class="status-dot" aria-hidden="true"></span>
-          <span><b>Local till</b><small>Stored on this iPad</small></span>
-        </div>
         <img class="ah-wordmark" src="assets/architects-holiday-wordmark-white.svg" alt="Architects Holiday">
       </div>
     </header>
@@ -34,7 +30,6 @@
       <header class="workspace-head">
         <p class="eyebrow">OPEN DAY · GREAT PARK FARM</p>
         <h1><span id="stationTitle">Bar</span> <span id="workspaceSuffix">counter</span></h1>
-        <p class="sub" id="workspaceSub">Tap products to build the order, then enter the exact total on the standalone Stripe reader.</p>
       </header>
 
       <div class="counter-controls">
@@ -43,7 +38,6 @@
           <button type="button" data-shop="merch" aria-pressed="false"><span>Merch</span><small>Goods</small></button>
           <button type="button" id="openReports" data-view="reports" aria-pressed="false"><span>Reports</span><small>Summary</small></button>
         </nav>
-        <div class="local-boundary"><span aria-hidden="true"></span><b id="localBoundaryCopy">Stock and sales are stored on this iPad only</b></div>
       </div>
 
       <div class="pos-layout" id="posView">
@@ -70,10 +64,10 @@
           <div class="basket-lines" id="basketLines"></div>
           <p class="basket-empty" id="basketEmpty">Tap a product to begin.</p>
           <div class="basket-total"><span>Total</span><strong id="basketTotal">£0.00</strong></div>
-          <p class="basket-note" id="basketNote">Add products, then take the exact total on the S710.</p>
+          <p class="basket-note" id="basketNote">Add products, then take payment on Stripe Reader.</p>
           <button class="pay-button" id="startPayment" type="button" disabled>
             <span>Take payment</span>
-            <strong>Use S710</strong>
+            <strong>Stripe Reader</strong>
             <b aria-hidden="true">→</b>
           </button>
         </aside>
@@ -133,13 +127,13 @@
     <form method="dialog">
       <button class="sheet-close" value="cancel" aria-label="Close payment instructions">×</button>
       <span class="eyebrow">STANDALONE PAYMENT</span>
-      <h2>Take <strong id="paymentTotal">£0.00</strong> on the S710</h2>
+      <h2>Take <strong id="paymentTotal">£0.00</strong> on the Stripe Card Reader</h2>
       <ol>
         <li>Enter the exact total on the Stripe reader.</li>
         <li>Ask the guest to tap or insert their card.</li>
         <li>Wait until the reader clearly shows <strong>Approved</strong>.</li>
       </ol>
-      <div class="payment-warning">This iPad cannot see the reader. Only complete the sale after the S710 says Approved.</div>
+      <div class="payment-warning">This iPad cannot see the reader. Only complete the sale after the reader says Approved.</div>
       <button class="approved-button" id="completeSale" value="approved">Payment approved · complete sale</button>
       <button class="secondary-button" value="cancel">Declined or cancelled · return to basket</button>
     </form>

@@ -9,7 +9,7 @@ test("PWA shell exposes clear Bar and Merch station modes", async () => {
   const html = await load("index.html");
   assert.match(html, /data-shop="bar"/);
   assert.match(html, /data-shop="merch"/);
-  assert.match(html, /Stock and sales are stored on this iPad only/);
+  assert.doesNotMatch(html, /Local till|Stored on this iPad|Stock and sales are stored on this iPad only/);
   assert.match(html, /Payment approved/);
   assert.match(html, /id="undoBasket"/);
 });
@@ -76,6 +76,22 @@ test("catalogue visually groups products and separates supplier from serving for
   assert.match(css, /\.product-supplier/);
   assert.match(css, /\.product-serving/);
   assert.match(css, /--group-accent-rgb/);
+});
+
+test("founder layout refinement keeps the selector compact and predictable", async () => {
+  const [html, app, css] = await Promise.all([load("index.html"), load("app.js"), load("styles.css")]);
+  assert.doesNotMatch(html, /Tap products to build the order|Use S710|on the S710/);
+  assert.match(html, /Add products, then take payment on Stripe Reader/);
+  assert.match(html, /on the Stripe Card Reader/);
+  assert.match(app, /merch: Object\.freeze\(\[\s*\{ key: "caps-bags"[\s\S]*\{ key: "small-goods"[\s\S]*\{ key: "t-shirts"/);
+  assert.match(app, /"merch-tote": 0, "merch-cap": 1/);
+  assert.match(app, /bar-tilsmore-rose-bottle/);
+  assert.match(css, /\.product-grid \{[\s\S]*grid-template-columns: repeat\(3/);
+  assert.match(css, /@media \(max-width: 1180px\)[\s\S]*?\.product-grid \{\s*grid-template-columns: repeat\(3/);
+  assert.match(css, /@media \(max-width: 700px\)[\s\S]*?\.product-grid \{\s*grid-template-columns: repeat\(2/);
+  assert.match(css, /\.product-row-break \{\s*grid-column-start: 1/);
+  assert.match(css, /\.shop-switch button \{[\s\S]*border: 1px solid rgba/);
+  assert.match(css, /\.shop-switch button\[aria-pressed="true"\]/);
 });
 
 test("offline assets and install manifest are present", async () => {

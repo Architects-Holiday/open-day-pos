@@ -137,7 +137,6 @@ button:disabled {
 }
 
 .topbar-end,
-.device-status,
 .menu-toggle,
 .menu-toggle i {
   display: flex;
@@ -145,7 +144,7 @@ button:disabled {
 }
 
 .topbar-end {
-  gap: 24px;
+  justify-content: flex-end;
 }
 
 .menu-toggle {
@@ -171,31 +170,6 @@ button:disabled {
   background: currentColor;
 }
 
-.device-status {
-  gap: 8px;
-  min-width: 0;
-  color: var(--calm-muted);
-}
-
-.device-status > span:last-child {
-  display: grid;
-  gap: 2px;
-}
-
-.device-status b,
-.device-status small {
-  font-size: 10px;
-  font-weight: 400;
-}
-
-.status-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--calm-teal);
-  box-shadow: 0 0 12px rgba(130, 216, 199, 0.45);
-}
-
 .ah-wordmark {
   display: block;
   width: clamp(142px, 18vw, 184px);
@@ -211,7 +185,7 @@ button:disabled {
 
 .workspace-head {
   max-width: 900px;
-  margin-bottom: 38px;
+  margin-bottom: 22px;
 }
 
 .eyebrow,
@@ -245,21 +219,13 @@ button:disabled {
   animation: calmTitle 28s ease-in-out infinite alternate;
 }
 
-.workspace-head .sub {
-  max-width: 690px;
-  margin: 17px 0 0;
-  color: #b3bbc4;
-  font-size: 15px;
-  line-height: 1.55;
-}
-
 .counter-controls {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   gap: 22px;
-  margin-bottom: 30px;
-  padding-block: 13px;
+  margin-bottom: 26px;
+  padding-block: 10px;
   border-block: 1px solid var(--calm-line);
 }
 
@@ -273,14 +239,25 @@ button:disabled {
   grid-template-columns: auto auto;
   align-items: baseline;
   gap: 7px;
-  min-width: 116px;
+  min-width: 124px;
   min-height: 48px;
-  padding: 9px 14px;
-  border: 1px solid transparent;
-  border-radius: 999px;
-  background: transparent;
-  color: #89949f;
+  padding: 9px 16px;
+  border: 1px solid rgba(168, 228, 238, 0.24);
+  border-radius: 14px;
+  background: rgba(8, 15, 23, 0.28);
+  color: #b7c1ca;
   text-align: left;
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.035);
+  transition: border-color 0.18s ease, background 0.18s ease, color 0.18s ease, transform 0.16s ease;
+}
+
+.shop-switch button:is(:hover, :focus-visible) {
+  border-color: rgba(168, 228, 238, 0.48);
+  background: rgba(168, 228, 238, 0.08);
+}
+
+.shop-switch button:active {
+  transform: scale(0.98);
 }
 
 .shop-switch button span {
@@ -290,36 +267,19 @@ button:disabled {
 }
 
 .shop-switch button small {
-  color: #71808c;
+  color: #84939f;
   font-size: 9px;
 }
 
 .shop-switch button[aria-pressed="true"] {
-  border-color: rgba(168, 228, 238, 0.24);
-  background: rgba(168, 228, 238, 0.065);
-  color: var(--calm-text);
-  box-shadow: 0 0 24px rgba(130, 216, 199, 0.05);
+  border-color: rgba(130, 216, 199, 0.68);
+  background: rgba(130, 216, 199, 0.16);
+  color: #f4fbf8;
+  box-shadow: 0 0 24px rgba(130, 216, 199, 0.1), inset 0 1px rgba(255, 255, 255, 0.06);
 }
 
-.local-boundary {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  min-height: 38px;
-  padding: 8px 13px;
-  border: 1px solid rgba(168, 228, 238, 0.12);
-  border-radius: 999px;
-  background: rgba(8, 15, 23, 0.2);
-  color: #8e9aa1;
-  font-size: 10px;
-}
-
-.local-boundary > span {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--calm-lime);
-  box-shadow: 0 0 12px rgba(202, 217, 165, 0.35);
+.shop-switch button[aria-pressed="true"] small {
+  color: #bce8df;
 }
 
 .pos-layout {
@@ -419,9 +379,13 @@ button:disabled {
 
 .product-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(176px, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 12px;
   padding-top: 13px;
+}
+
+.product-row-break {
+  grid-column-start: 1;
 }
 
 .product-button {
@@ -1338,7 +1302,7 @@ button:disabled {
   }
 
   .product-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .product-edit-row {
@@ -1386,10 +1350,6 @@ button:disabled {
     padding: calc(18px + env(safe-area-inset-top, 0px)) 18px 18px;
   }
 
-  .device-status > span:last-child {
-    display: none;
-  }
-
   .ah-wordmark {
     width: 136px;
   }
@@ -1402,10 +1362,6 @@ button:disabled {
     font-size: 44px;
   }
 
-  .workspace-head .sub {
-    font-size: 13px;
-  }
-
   .counter-controls {
     align-items: stretch;
     flex-direction: column;
@@ -1414,10 +1370,6 @@ button:disabled {
   .shop-switch button {
     flex: 1;
     min-width: 0;
-  }
-
-  .local-boundary {
-    align-self: flex-start;
   }
 
   .product-grid {
