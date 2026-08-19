@@ -37,7 +37,7 @@ From this directory on Windows:
 - `npm.cmd run serve`
 - open `http://127.0.0.1:4173`
 
-Adding the app to an iPad Home Screen and service-worker offline installation requires an approved HTTPS deployment. No deployment is included or authorised by this prototype.
+The approved public HTTPS deployment is https://architects-holiday.github.io/open-day-pos/. Open it once online on each iPad, then use Add to Home Screen. After the first successful load, the service worker caches the app for offline use on that device.
 
 ## Future extension seam
 
