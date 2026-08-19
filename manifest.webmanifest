@@ -1,0 +1,9 @@
+{
+  "name": "Architects Holiday Open Day POS",
+  "short_name": "AH Open Day",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#17192f",
+  "theme_color": "#17192f",
+  "description": "Offline-first bar and merchandise calculator for the Architects Holiday Open Day"
+}

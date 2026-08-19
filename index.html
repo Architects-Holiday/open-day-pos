@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#17192f">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="AH Open Day">
+  <title>Open Day POS · Architects Holiday</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="calm-pos">
+  <a class="skip-link" id="skipLink" href="#products">Skip to products</a>
+  <div class="ambient-field" aria-hidden="true"></div>
+
+  <div class="app-shell">
+    <header class="topbar">
+      <button class="menu-toggle" id="openOperations" type="button">
+        <i aria-hidden="true"><b></b><b></b><b></b></i>
+        <span>Operations</span>
+      </button>
+      <div class="topbar-end">
+        <div class="device-status" role="status">
+          <span class="status-dot" aria-hidden="true"></span>
+          <span><b>Local till</b><small>Stored on this iPad</small></span>
+        </div>
+        <img class="ah-wordmark" src="assets/architects-holiday-wordmark-white.svg" alt="Architects Holiday">
+      </div>
+    </header>
+
+    <main class="workspace">
+      <header class="workspace-head">
+        <p class="eyebrow">OPEN DAY · GREAT PARK FARM</p>
+        <h1><span id="stationTitle">Bar</span> <span id="workspaceSuffix">counter</span></h1>
+        <p class="sub" id="workspaceSub">Tap products to build the order, then enter the exact total on the standalone Stripe reader.</p>
+      </header>
+
+      <div class="counter-controls">
+        <nav class="shop-switch" aria-label="Choose till view">
+          <button type="button" data-shop="bar" aria-pressed="true"><span>Bar</span><small>Drinks</small></button>
+          <button type="button" data-shop="merch" aria-pressed="false"><span>Merch</span><small>Goods</small></button>
+          <button type="button" id="openReports" data-view="reports" aria-pressed="false"><span>Reports</span><small>Summary</small></button>
+        </nav>
+        <div class="local-boundary"><span aria-hidden="true"></span><b id="localBoundaryCopy">Stock and sales are stored on this iPad only</b></div>
+      </div>
+
+      <div class="pos-layout" id="posView">
+        <section class="catalogue" aria-labelledby="catalogueTitle">
+          <div class="section-heading">
+            <div><span id="catalogueEyebrow">Bar selection</span><h2 id="catalogueTitle">Tap to add</h2></div>
+            <p id="salesSummary">No completed sales on this iPad</p>
+          </div>
+          <div class="product-grid" id="products"></div>
+          <div class="empty-state" id="emptyProducts" hidden>
+            <p>No products are set up for this counter.</p>
+            <button type="button" id="emptyAddProduct">Add a product</button>
+          </div>
+        </section>
+
+        <aside class="basket" aria-labelledby="basketTitle">
+          <div class="basket-heading">
+            <div><span>Current order</span><h2 id="basketTitle">Basket</h2></div>
+            <div class="basket-actions">
+              <button class="text-button" id="undoBasket" type="button" disabled>Undo</button>
+              <button class="text-button" id="clearBasket" type="button">Clear</button>
+            </div>
+          </div>
+          <div class="basket-lines" id="basketLines"></div>
+          <p class="basket-empty" id="basketEmpty">Tap a product to begin.</p>
+          <div class="basket-total"><span>Total</span><strong id="basketTotal">£0.00</strong></div>
+          <p class="basket-note" id="basketNote">Add products, then take the exact total on the S710.</p>
+          <button class="pay-button" id="startPayment" type="button" disabled>
+            <span>Take payment</span>
+            <strong>Use S710</strong>
+            <b aria-hidden="true">→</b>
+          </button>
+        </aside>
+      </div>
+
+      <section class="reports-view" id="reportsView" aria-labelledby="reportTitle" hidden>
+        <header class="reports-head">
+          <div>
+            <span class="eyebrow">THIS IPAD ONLY</span>
+            <h2 id="reportTitle" tabindex="-1">Event summary</h2>
+            <p id="reportScope">Completed sales stored on this device. Add the totals from both iPads for the complete event.</p>
+          </div>
+          <div class="report-period">
+            <span>Sales window</span>
+            <strong id="reportPeriod">No completed sales yet</strong>
+          </div>
+        </header>
+
+        <div class="report-kpis" aria-label="Event totals">
+          <article class="report-kpi report-kpi-primary"><span>Total revenue</span><strong id="reportRevenue">£0.00</strong><small>Approved sales</small></article>
+          <article class="report-kpi"><span>Units sold</span><strong id="reportUnits">0</strong><small>Individual sale units</small></article>
+          <article class="report-kpi"><span>Products sold</span><strong id="reportProducts">0</strong><small>Distinct product lines</small></article>
+          <article class="report-kpi"><span>Transactions</span><strong id="reportTransactions">0</strong><small>Completed orders</small></article>
+          <article class="report-kpi"><span>Average sale</span><strong id="reportAverage">£0.00</strong><small>Revenue per order</small></article>
+        </div>
+
+        <div class="report-grid">
+          <section class="report-panel" aria-labelledby="reportShopsTitle">
+            <header><span>BY COUNTER</span><h3 id="reportShopsTitle">Bar and merchandise</h3></header>
+            <div class="report-shop-grid" id="reportShopBreakdown"></div>
+          </section>
+
+          <section class="report-panel" aria-labelledby="reportCategoriesTitle">
+            <header><span>BY CATEGORY</span><h3 id="reportCategoriesTitle">What performed</h3></header>
+            <div class="report-category-list" id="reportCategoryBreakdown"></div>
+            <p class="report-empty" id="reportCategoryEmpty">Category totals will appear after the first completed sale.</p>
+          </section>
+        </div>
+
+        <section class="report-panel report-products" aria-labelledby="reportProductsTitle">
+          <header><span>PRODUCT DETAIL</span><h3 id="reportProductsTitle">Units and revenue</h3></header>
+          <div class="report-table-wrap">
+            <table>
+              <thead><tr><th scope="col">Product</th><th scope="col">Counter</th><th scope="col">Category</th><th scope="col">Units</th><th scope="col">Revenue</th></tr></thead>
+              <tbody id="reportProductRows"></tbody>
+            </table>
+          </div>
+          <p class="report-empty" id="reportProductEmpty">Product performance will appear after the first completed sale.</p>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+  <dialog id="paymentDialog" class="sheet payment-sheet">
+    <form method="dialog">
+      <button class="sheet-close" value="cancel" aria-label="Close payment instructions">×</button>
+      <span class="eyebrow">STANDALONE PAYMENT</span>
+      <h2>Take <strong id="paymentTotal">£0.00</strong> on the S710</h2>
+      <ol>
+        <li>Enter the exact total on the Stripe reader.</li>
+        <li>Ask the guest to tap or insert their card.</li>
+        <li>Wait until the reader clearly shows <strong>Approved</strong>.</li>
+      </ol>
+      <div class="payment-warning">This iPad cannot see the reader. Only complete the sale after the S710 says Approved.</div>
+      <button class="approved-button" id="completeSale" value="approved">Payment approved · complete sale</button>
+      <button class="secondary-button" value="cancel">Declined or cancelled · return to basket</button>
+    </form>
+  </dialog>
+
+  <dialog id="operationsDialog" class="sheet operations-sheet">
+    <form method="dialog" id="operationsForm">
+      <button class="sheet-close" value="cancel" aria-label="Close operations">×</button>
+      <span class="eyebrow">THIS IPAD</span>
+      <h2>Operations</h2>
+      <p class="boundary-copy">Counts are estimates for this device. If both iPads sell from the same counter, take a physical count before relying on either remaining figure.</p>
+
+      <label class="field">iPad label<input id="deviceLabel" maxlength="40" autocomplete="off"></label>
+
+      <div class="operations-heading">
+        <div><span id="manageShopLabel">Bar catalogue</span><h3>Products and stock</h3></div>
+        <button type="button" class="secondary-small" id="addProduct">Add product</button>
+      </div>
+      <p class="shared-stock-guidance">Wine bottle and glass buttons share one physical stock pool. Update the bottle row to change that wine’s count.</p>
+      <div class="product-editor" id="productEditor"></div>
+
+      <div class="export-actions">
+        <button type="button" class="secondary-button" id="exportCsv">Export sales CSV</button>
+        <button type="button" class="secondary-button" id="exportJson">Back up all data</button>
+      </div>
+      <button class="approved-button" id="saveOperations" value="save">Save changes</button>
+    </form>
+  </dialog>
+
+  <template id="productEditTemplate">
+    <fieldset class="product-edit-row">
+      <input type="hidden" data-field="id">
+      <label>Name<input data-field="name" maxlength="80" autocomplete="off" required></label>
+      <label>Detail<input data-field="detail" maxlength="100" autocomplete="off"></label>
+      <label>Price £<input data-field="price" inputmode="decimal" placeholder="0.00"></label>
+      <label class="stock-field"><span data-stock-label>Count</span><input data-field="stock" inputmode="decimal" min="0" required></label>
+      <label>Sold as<input data-field="unit" maxlength="24" placeholder="item" required></label>
+      <label>Low at<input data-field="lowStockAt" inputmode="numeric" pattern="[0-9]*" min="0" required></label>
+      <label class="active-field"><input data-field="active" type="checkbox">Available</label>
+      <small class="stock-pool-note" data-stock-note></small>
+    </fieldset>
+  </template>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
