@@ -1,4 +1,4 @@
-const CACHE = "ah-open-day-pos-v5";
+const CACHE = "ah-open-day-pos-v6";
 const ASSETS = ["./", "./index.html", "./styles.css", "./app.js", "./catalog.js", "./pos-domain.js", "./storage.js", "./manifest.webmanifest", "./assets/architects-holiday-wordmark-white.svg"];
 
 self.addEventListener("install", (event) => {

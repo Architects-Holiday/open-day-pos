@@ -18,11 +18,13 @@ const money = new Intl.NumberFormat("en-GB", { style: "currency", currency: "GBP
 const whole = new Intl.NumberFormat("en-GB");
 const reportDateTime = new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
 const reportTime = new Intl.DateTimeFormat("en-GB", { hour: "2-digit", minute: "2-digit" });
+const SALE_CONFIRMATION_MS = 2400;
 const loaded = loadLocalState();
 let state = loaded.state;
 let currentShop = state.device.preferredShop;
 let currentView = "pos";
 let toastTimer;
+let saleConfirmationTimer;
 const undoBaskets = { bar: null, merch: null };
 
 const elements = {
@@ -61,6 +63,8 @@ const elements = {
   reportCategoryEmpty: byId("reportCategoryEmpty"),
   reportProductRows: byId("reportProductRows"),
   reportProductEmpty: byId("reportProductEmpty"),
+  saleConfirmation: byId("saleConfirmation"),
+  saleConfirmationTotal: byId("saleConfirmationTotal"),
   toast: byId("toast")
 };
 
@@ -73,6 +77,15 @@ function showToast(message) {
   elements.toast.textContent = message;
   elements.toast.hidden = false;
   toastTimer = setTimeout(() => { elements.toast.hidden = true; }, 3200);
+}
+
+function showSaleConfirmation(totalPence) {
+  clearTimeout(saleConfirmationTimer);
+  elements.saleConfirmationTotal.textContent = money.format(totalPence / 100);
+  elements.saleConfirmation.hidden = false;
+  saleConfirmationTimer = setTimeout(() => {
+    elements.saleConfirmation.hidden = true;
+  }, SALE_CONFIRMATION_MS);
 }
 
 function make(tag, className, text) {
@@ -577,6 +590,7 @@ elements.startPayment.addEventListener("click", () => {
 byId("completeSale").addEventListener("click", (event) => {
   event.preventDefault();
   try {
+    const completedTotalPence = basketSummary(state, currentShop).totalPence;
     const now = new Date().toISOString();
     state = completeApprovedSale(state, {
       shop: currentShop,
@@ -588,7 +602,7 @@ byId("completeSale").addEventListener("click", (event) => {
     persist();
     elements.paymentDialog.close();
     render();
-    showToast("Sale completed and stock updated");
+    showSaleConfirmation(completedTotalPence);
   } catch (error) {
     showToast(error.message);
   }

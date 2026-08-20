@@ -123,6 +123,16 @@
 
   <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
+  <section class="sale-confirmation" id="saleConfirmation" role="status" aria-live="assertive" aria-atomic="true" aria-labelledby="saleConfirmationTitle" hidden>
+    <div class="sale-confirmation-card">
+      <div class="sale-confirmation-mark" aria-hidden="true">&#10003;</div>
+      <span class="eyebrow">ORDER COMPLETE</span>
+      <h2 id="saleConfirmationTitle">Sale completed</h2>
+      <strong class="sale-confirmation-total" id="saleConfirmationTotal">&pound;0.00</strong>
+      <p>Stock and reports have been updated.</p>
+    </div>
+  </section>
+
   <dialog id="paymentDialog" class="sheet payment-sheet">
     <form method="dialog">
       <button class="sheet-close" value="cancel" aria-label="Close payment instructions">×</button>

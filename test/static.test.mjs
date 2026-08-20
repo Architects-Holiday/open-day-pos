@@ -94,6 +94,18 @@ test("founder layout refinement keeps the selector compact and predictable", asy
   assert.match(css, /\.shop-switch button\[aria-pressed="true"\]/);
 });
 
+
+test("completed sales receive a prominent timed confirmation screen", async () => {
+  const [html, app, css, worker] = await Promise.all([load("index.html"), load("app.js"), load("styles.css"), load("sw.js")]);
+  assert.match(html, /id="saleConfirmation"[^>]*role="status"[^>]*aria-live="assertive"[^>]*hidden/);
+  assert.match(html, /id="saleConfirmationTitle">Sale completed/);
+  assert.match(html, /id="saleConfirmationTotal">&pound;0\.00/);
+  assert.match(app, /const SALE_CONFIRMATION_MS = 2400/);
+  assert.match(app, /completeApprovedSale[\s\S]*showSaleConfirmation\(completedTotalPence\)/);
+  assert.match(css, /\.sale-confirmation \{[\s\S]*position: fixed;[\s\S]*inset: 0;[\s\S]*place-items: center/);
+  assert.match(css, /z-index: 140/);
+  assert.match(worker, /ah-open-day-pos-v6/);
+});
 test("offline assets and install manifest are present", async () => {
   const [manifest, worker] = await Promise.all([load("manifest.webmanifest"), load("sw.js")]);
   assert.equal(JSON.parse(manifest).display, "standalone");
